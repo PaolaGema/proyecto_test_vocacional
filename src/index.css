@@ -1,0 +1,484 @@
+@import 'tailwindcss';
+
+/* Modo oscuro controlado por la clase .dark en <html> (interruptor sol/luna) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Tokens de marca (Figma: Test web) ---------- */
+@theme {
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+
+  --color-navy: #002e42; /* azul profundo principal */
+  --color-navy-700: #133b5c;
+  --color-ink: #0b2b3f; /* texto de inputs / overlays */
+  --color-brand: #33a1b8; /* turquesa principal: acentos, iconos, texto grande */
+  --color-action: #1f7a8c; /* turquesa accesible: fondos con texto blanco (5,0:1, WCAG AA) */
+  --color-muted: #6b7280; /* texto secundario accesible sobre blanco (4,8:1) */
+  --color-slate-btn: #334148; /* botón deshabilitado */
+  --color-slate-icon: #4f6068;
+  --color-gold: #d28800; /* estrella / diamante ganados */
+  --color-amber: #ffa101;
+  --color-spark: #ffbe2c; /* destellos de recompensa */
+  --color-success: #1ad598;
+  --color-card-gray: #e6e6e6;
+  --color-option-border: #b7b7b7;
+  --color-option-text: #414651;
+  --color-card-title: #1e293b;
+  --color-body: #4a4a4a;
+  --color-teal-soft: #2c5669;
+  --color-blue-soft: #eef4fe;
+  --color-cream: #fffaec;
+  --color-rose: #fff5f6;
+  --color-mist: #f2f5f7;
+
+  --shadow-brand: 0 4px 61px rgb(51 161 184 / 0.4);
+  --shadow-card: 0 4px 6px rgb(0 0 0 / 0.1), 0 2px 4px rgb(0 0 0 / 0.1);
+  --shadow-soft: 0 4px 15px rgb(0 0 0 / 0.25);
+}
+
+/* ---------- Tokens semánticos que cambian con el tema ---------- */
+:root {
+  --surface: #ffffff; /* zona principal de la pantalla */
+  --footer: #002e42; /* franja inferior (pie de preguntas) */
+  --fg: #002e42; /* texto principal */
+  --pill: #1f7a8c; /* etiqueta "Bloque x de 3" */
+  --toggle: rgb(0 46 66 / 0.5);
+  --empty-icon-stroke: #002e42; /* contorno de incentivos vacíos */
+  --back-arrow: #6b7280;
+  --section-label: #6b7280;
+  --option-bg: #ffffff;
+  color-scheme: light;
+}
+
+.dark {
+  --surface: #002e42;
+  --footer: #ffffff;
+  --fg: #ffffff;
+  --pill: rgb(51 161 184 / 0.21);
+  --toggle: rgb(255 255 255 / 0.1);
+  --empty-icon-stroke: transparent;
+  --back-arrow: #9ca3af;
+  --section-label: #9ca3af;
+  --option-bg: #ffffff;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-footer: var(--footer);
+  --color-fg: var(--fg);
+  --color-pill: var(--pill);
+  --color-toggle: var(--toggle);
+  --color-section-label: var(--section-label);
+  --color-back-arrow: var(--back-arrow);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--surface);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* ---------- Animaciones ---------- */
+@keyframes spin-ring {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pop-in {
+  0% {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes spark {
+  0% {
+    transform: translate(0, 0) scale(0.4);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(1);
+    opacity: 0;
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    --tw-ring-color: rgb(51 161 184 / 0.25);
+  }
+  50% {
+    --tw-ring-color: rgb(51 161 184 / 0.6);
+  }
+}
+
+/* Modo práctica: onda del toque de la manito */
+@keyframes demo-ripple {
+  from {
+    transform: scale(0.3);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* Modo práctica: el aviso "parpadea" con un pulso suave unas pocas veces (diseño original) */
+@keyframes practice-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(51 161 184 / 0);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgb(51 161 184 / 0.28);
+    filter: brightness(1.15);
+  }
+}
+
+/* Sticker "¡Así de fácil!" que entra girando y rebota */
+@keyframes sticker-in {
+  from {
+    opacity: 0;
+    transform: rotate(-20deg) scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(8deg) scale(1);
+  }
+}
+
+/* Cuenta regresiva: cada número late sin desaparecer */
+@keyframes count-pop {
+  from {
+    transform: scale(1.25);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* ---------- Recompensa "sticker brillante" (propuesta B) ---------- */
+@keyframes cap-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sticker-drop {
+  0% {
+    transform: translateY(-35%) scale(0.4) rotate(-35deg);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-8deg);
+    opacity: 1;
+  }
+}
+@keyframes ring-fill {
+  from {
+    stroke-dasharray: 0 100;
+  }
+  to {
+    stroke-dasharray: var(--ring) 100;
+  }
+}
+@keyframes peng-up {
+  from {
+    transform: translateY(120%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes slot-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes slot-color {
+  to {
+    fill: var(--slot-color);
+    stroke: transparent;
+  }
+}
+@keyframes shine-sweep {
+  from {
+    left: -60%;
+  }
+  to {
+    left: 130%;
+  }
+}
+.reward-shine {
+  animation: shine-sweep 0.9s ease-in-out 1s both;
+}
+.reward-slot-new path {
+  animation: slot-color 0.01s linear 1.55s forwards;
+}
+
+/* ---------- Corazón que se carga ---------- */
+@keyframes wave-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-32px);
+  }
+}
+@keyframes charger-bump {
+  50% {
+    transform: scale(1.12);
+  }
+}
+@keyframes charger-ready {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.25) rotate(-8deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(8deg);
+  }
+  70% {
+    transform: scale(1.22) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1.15);
+  }
+}
+@keyframes toast-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  12% {
+    opacity: 1;
+    transform: none;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- Insignia de fin de etapa ---------- */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    opacity: 0;
+    transform: rotate(155deg) translateX(0);
+  }
+  2% {
+    opacity: 1;
+  }
+  10%,
+  100% {
+    opacity: 0;
+    transform: rotate(155deg) translateX(-420px);
+  }
+}
+
+@keyframes badge-merge {
+  0% {
+    transform: none;
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(14vh) scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(26vh) scale(0.4);
+    opacity: 0;
+  }
+}
+@keyframes badge-in {
+  from {
+    transform: scale(0) rotate(-180deg);
+  }
+  to {
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes badge-rays {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes badge-flash {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes badge-wave {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(5);
+  }
+}
+
+@keyframes draw-line {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Elemento que la manito está señalando */
+.demo-hover {
+  box-shadow: 0 0 0 4px rgb(51 161 184 / 0.6) !important;
+  transform: translateY(-1px);
+}
+
+.animate-fade-up {
+  animation: fade-up 0.45s ease both;
+}
+
+/* Respeta a quien pide menos movimiento (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Foco visible para teclado */
+:focus-visible {
+  outline: 3px solid #33a1b8;
+  outline-offset: 2px;
+}
+
+/* Pantalla final: cohete del planeta a la luna */
+@keyframes rocket-trip {
+  0% {
+    left: var(--from-x);
+    top: var(--from-y);
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  40% {
+    left: calc(var(--from-x) + (var(--land-x) - var(--from-x)) * 0.12);
+    top: 30%;
+    transform: translate(-50%, -50%) scale(1.1) rotate(-25deg);
+  }
+  70% {
+    left: 50%;
+    top: 6%;
+    transform: translate(-50%, -50%) scale(1.15) rotate(35deg);
+  }
+  92% {
+    transform: translate(-50%, -50%) scale(0.85) rotate(4deg);
+  }
+  100% {
+    left: var(--land-x);
+    top: var(--land-y);
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 1;
+  }
+}
+@keyframes rocket-flame {
+  from {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+@keyframes land-puff {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
